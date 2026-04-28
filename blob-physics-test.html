@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blob Physics Test Environment</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 100;
+            max-width: 350px;
+        }
+        #info h2 {
+            margin-top: 0;
+            color: #88ccff;
+        }
+        #info h3 {
+            margin: 10px 0 5px;
+            color: #ffcc88;
+        }
+        #physics-data {
+            font-family: monospace;
+            font-size: 12px;
+            background: rgba(0,50,100,0.3);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            color: #fff;
+            z-index: 100;
+        }
+        #controls button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .test-btn { background: #4488cc; color: white; }
+        .test-btn:hover { background: #66aaee; }
+        .scenario-btn { background: #44aa44; color: white; }
+        .scenario-btn:hover { background: #66cc66; }
+        .reset-btn { background: #cc4444; color: white; }
+        .reset-btn:hover { background: #ee6666; }
+        kbd {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #555;
+        }
+        #sliders {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.85);
+            padding: 15px;
+            border-radius: 8px;
+            color: #fff;
+            z-index: 100;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 280px;
+        }
+        #sliders h3 {
+            margin-top: 0;
+            color: #88ccff;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+        }
+        #sliders h4 {
+            margin: 12px 0 8px;
+            color: #ffcc88;
+            font-size: 13px;
+        }
+        .slider-section {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+            font-size: 12px;
+        }
+        .slider-row label {
+            width: 80px;
+            color: #aaa;
+        }
+        .slider-row input[type="range"] {
+            flex: 1;
+            margin: 0 8px;
+            cursor: pointer;
+        }
+        .slider-row span {
+            width: 45px;
+            text-align: right;
+            font-family: monospace;
+            color: #88ff88;
+        }
+        .slider-row .hint {
+            width: 50px;
+            font-size: 10px;
+            color: #888;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h2>Blob Physics Test Environment</h2>
+        <p><kbd>WASD</kbd> Move | <kbd>Space</kbd> Jump | <kbd>Shift</kbd> Slide</p>
+        <p><kbd>Click</kbd> Pointer lock | <kbd>Mouse</kbd> Look around</p>
+
+        <h3>Physics States</h3>
+        <div id="physics-data">Loading...</div>
+    </div>
+
+    <div id="controls">
+        <h3>Test Scenarios</h3>
+        <button class="scenario-btn" onclick="testScenario('circleLeft')">Circle Left</button>
+        <button class="scenario-btn" onclick="testScenario('circleRight')">Circle Right</button>
+        <button class="scenario-btn" onclick="testScenario('zigzag')">Zig-Zag</button>
+        <button class="scenario-btn" onclick="testScenario('strafeLeft')">Strafe Left</button>
+        <button class="scenario-btn" onclick="testScenario('strafeRight')">Strafe Right</button>
+        <br>
+        <button class="test-btn" onclick="testScenario('jumpLand')">Jump & Land</button>
+        <button class="test-btn" onclick="testScenario('slideForward')">Slide</button>
+        <button class="test-btn" onclick="testScenario('impact')">Impact</button>
+        <br>
+        <button class="reset-btn" onclick="resetTest()">Reset Position</button>
+    </div>
+
+    <div id="sliders">
+        <h3>Physics Tuning</h3>
+
+        <div class="slider-section">
+            <h4>Ground Flatten (when standing)</h4>
+            <div class="slider-row">
+                <label>Flatten %:</label>
+                <input type="range" id="groundSag" min="0" max="0.8" step="0.02" value="0.35">
+                <span id="groundSag-val">0.35</span>
+            </div>
+            <div class="slider-row">
+                <label>Response:</label>
+                <input type="range" id="groundSagSmoothing" min="1" max="30" step="1" value="8">
+                <span id="groundSagSmoothing-val">8</span>
+                <span class="hint">fast</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Turn Bulge (mass shifts when turning)</h4>
+            <div class="slider-row">
+                <label>Sensitivity:</label>
+                <input type="range" id="bulgeThreshold" min="0.5" max="15" step="0.5" value="2">
+                <span id="bulgeThreshold-val">2.0</span>
+                <span class="hint">low=easy</span>
+            </div>
+            <div class="slider-row">
+                <label>Intensity:</label>
+                <input type="range" id="bulgeMultiplier" min="0.005" max="0.1" step="0.005" value="0.012">
+                <span id="bulgeMultiplier-val">0.012</span>
+            </div>
+            <div class="slider-row">
+                <label>Max Size:</label>
+                <input type="range" id="bulgeMax" min="0.1" max="1.5" step="0.1" value="0.4">
+                <span id="bulgeMax-val">0.4</span>
+            </div>
+            <div class="slider-row">
+                <label>Speed:</label>
+                <input type="range" id="bulgeLerp" min="1" max="30" step="1" value="8">
+                <span id="bulgeLerp-val">8</span>
+                <span class="hint">appear</span>
+            </div>
+            <div class="slider-row">
+                <label>Dir Speed:</label>
+                <input type="range" id="bulgeDirLerp" min="1" max="20" step="1" value="6">
+                <span id="bulgeDirLerp-val">6</span>
+                <span class="hint">rotate</span>
+            </div>
+            <div class="slider-row">
+                <label>Fade Out:</label>
+                <input type="range" id="bulgeDecay" min="0.02" max="0.8" step="0.02" value="0.15">
+                <span id="bulgeDecay-val">0.15</span>
+                <span class="hint">hi=slow</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Organic Jiggle (ambient movement)</h4>
+            <div class="slider-row">
+                <label>Speed:</label>
+                <input type="range" id="wobbleFreq" min="1" max="50" step="1" value="12">
+                <span id="wobbleFreq-val">12</span>
+            </div>
+            <div class="slider-row">
+                <label>Amount:</label>
+                <input type="range" id="wobbleStrength" min="0" max="0.15" step="0.005" value="0.015">
+                <span id="wobbleStrength-val">0.015</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Impact Wobble (after hits/jumps)</h4>
+            <div class="slider-row">
+                <label>Fade Out:</label>
+                <input type="range" id="wobbleDecay" min="0.05" max="0.8" step="0.05" value="0.25">
+                <span id="wobbleDecay-val">0.25</span>
+                <span class="hint">hi=slow</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Movement Elongation</h4>
+            <div class="slider-row">
+                <label>Stretch %:</label>
+                <input type="range" id="stretchAmount" min="0" max="1.0" step="0.05" value="0.2">
+                <span id="stretchAmount-val">0.20</span>
+            </div>
+            <div class="slider-row">
+                <label>Response:</label>
+                <input type="range" id="stretchSmooth" min="1" max="15" step="1" value="4">
+                <span id="stretchSmooth-val">4</span>
+                <span class="hint">fast</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <button class="reset-btn" onclick="resetSliders()">Reset to Defaults</button>
+            <button class="test-btn" onclick="copyConfig()">Copy Config</button>
+        </div>
+    </div>
+
+    <script type="module" src="src/blob-physics-test.js"></script>
+</body>
+</html>

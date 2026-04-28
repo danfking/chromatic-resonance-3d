@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Agent / orchestrator working files (huge, prompts, screenshots)
+.agents/
+
+# Models: shipped only as a README pointing at CC0 sources;
+# users download their own animations and meshes
+assets/models/*
+!assets/models/README.md
+
+# Large binary archives
+*.zip
+
+# Random PDFs that ended up in assets
+*.pdf
+
+# Test output
+test-screenshots/
+test-baselines/
+.playwright-mcp/

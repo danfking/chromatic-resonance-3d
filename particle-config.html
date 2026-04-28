@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blob Particle Config</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 100;
+            max-width: 320px;
+        }
+        #info h2 {
+            margin: 0 0 10px;
+            color: #88ccff;
+            font-size: 16px;
+        }
+        #particle-info {
+            font-family: monospace;
+            font-size: 11px;
+            background: rgba(0,50,100,0.3);
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        #sliders {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.9);
+            padding: 15px;
+            border-radius: 8px;
+            color: #fff;
+            z-index: 100;
+            max-height: 95vh;
+            overflow-y: auto;
+            width: 320px;
+        }
+        #sliders h3 {
+            margin: 0 0 10px;
+            color: #88ccff;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+            font-size: 14px;
+        }
+        #sliders h4 {
+            margin: 15px 0 8px;
+            color: #ffcc88;
+            font-size: 12px;
+        }
+        .type-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .type-tab {
+            flex: 1;
+            padding: 8px 4px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .type-tab.main { background: #335577; color: #aaccff; }
+        .type-tab.vitality { background: #553333; color: #ffaaaa; }
+        .type-tab.essence { background: #444455; color: #ccccff; }
+        .type-tab.armor { background: #335533; color: #aaffaa; }
+        .type-tab.active.main { background: #4488cc; color: white; box-shadow: 0 0 8px #4488cc; }
+        .type-tab.active.vitality { background: #cc4444; color: white; box-shadow: 0 0 8px #cc4444; }
+        .type-tab.active.essence { background: #8888cc; color: white; box-shadow: 0 0 8px #8888cc; }
+        .type-tab.active.armor { background: #44aa44; color: white; box-shadow: 0 0 8px #44aa44; }
+        .type-tab:hover:not(.active) { filter: brightness(1.2); }
+        .slider-section {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 11px;
+        }
+        .slider-row label {
+            width: 100px;
+            color: #aaa;
+        }
+        .slider-row input[type="range"] {
+            flex: 1;
+            margin: 0 8px;
+            cursor: pointer;
+        }
+        .slider-row span {
+            width: 50px;
+            text-align: right;
+            font-family: monospace;
+            color: #88ff88;
+        }
+        .desc {
+            font-size: 10px;
+            color: #888;
+            margin: 2px 0 8px 0;
+            line-height: 1.3;
+        }
+        button {
+            margin: 4px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .action-btn { background: #4488cc; color: white; }
+        .action-btn:hover { background: #66aaee; }
+        .reset-btn { background: #cc4444; color: white; }
+        .reset-btn:hover { background: #ee6666; }
+        .copy-btn { background: #44aa44; color: white; }
+        .copy-btn:hover { background: #66cc66; }
+        .type-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .type-indicator.main { background: linear-gradient(135deg, #ff6644, #44aaff, #44ff88); }
+        .type-indicator.vitality { background: #ff4444; }
+        .type-indicator.essence { background: #aaaaff; }
+        .type-indicator.armor { background: #44ff44; }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h2>Blob Particle Configurator</h2>
+        <p>Select particle type and adjust sliders to tune behavior.</p>
+        <p><strong>Drag mouse</strong> to orbit camera</p>
+        <div id="particle-info">Loading...</div>
+    </div>
+
+    <div id="sliders">
+        <h3>Particle Tuning</h3>
+
+        <div class="type-tabs">
+            <button class="type-tab main active" data-type="main">
+                <span class="type-indicator main"></span>Main
+            </button>
+            <button class="type-tab vitality" data-type="vitality">
+                <span class="type-indicator vitality"></span>Vitality
+            </button>
+            <button class="type-tab essence" data-type="essence">
+                <span class="type-indicator essence"></span>Essence
+            </button>
+            <button class="type-tab armor" data-type="armor">
+                <span class="type-indicator armor"></span>Armor
+            </button>
+        </div>
+
+        <div class="slider-section">
+            <h4>Movement</h4>
+            <p class="desc">How particles move inside the blob</p>
+            <div class="slider-row">
+                <label>Speed:</label>
+                <input type="range" id="speed" min="0.01" max="0.5" step="0.01" value="0.1">
+                <span id="speed-val">0.10</span>
+            </div>
+            <div class="slider-row">
+                <label>Friction:</label>
+                <input type="range" id="friction" min="0.8" max="0.99" step="0.01" value="0.97">
+                <span id="friction-val">0.97</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Interaction</h4>
+            <p class="desc">How particles attract/repel each other</p>
+            <div class="slider-row">
+                <label>Range:</label>
+                <input type="range" id="interactionRadius" min="0.1" max="1.0" step="0.05" value="0.5">
+                <span id="interactionRadius-val">0.50</span>
+            </div>
+            <div class="slider-row">
+                <label>Repel Dist:</label>
+                <input type="range" id="repulsionDist" min="0.02" max="0.3" step="0.01" value="0.08">
+                <span id="repulsionDist-val">0.08</span>
+            </div>
+            <div class="slider-row">
+                <label>Repel Force:</label>
+                <input type="range" id="repulsionForce" min="0.5" max="10" step="0.5" value="3">
+                <span id="repulsionForce-val">3.0</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Attraction</h4>
+            <p class="desc">Positive = attract, Negative = repel</p>
+            <div class="slider-row">
+                <label>Same Type:</label>
+                <input type="range" id="attractSame" min="-1" max="1" step="0.1" value="0.5">
+                <span id="attractSame-val">0.50</span>
+            </div>
+            <div class="slider-row">
+                <label>Different:</label>
+                <input type="range" id="attractDiff" min="-1" max="1" step="0.1" value="0.3">
+                <span id="attractDiff-val">0.30</span>
+            </div>
+            <div class="slider-row">
+                <label>Randomness:</label>
+                <input type="range" id="attractRandom" min="0" max="1" step="0.1" value="0.2">
+                <span id="attractRandom-val">0.20</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Boundary</h4>
+            <p class="desc">How particles are kept inside</p>
+            <div class="slider-row">
+                <label>Start %:</label>
+                <input type="range" id="boundaryStart" min="0.5" max="0.95" step="0.05" value="0.75">
+                <span id="boundaryStart-val">0.75</span>
+            </div>
+            <div class="slider-row">
+                <label>Force:</label>
+                <input type="range" id="boundaryForce" min="1" max="20" step="1" value="5">
+                <span id="boundaryForce-val">5</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Appearance</h4>
+            <div class="slider-row">
+                <label>Size:</label>
+                <input type="range" id="particleSize" min="0.02" max="0.4" step="0.02" value="0.18">
+                <span id="particleSize-val">0.18</span>
+            </div>
+            <div class="slider-row">
+                <label>Count:</label>
+                <input type="range" id="particleCount" min="10" max="200" step="5" value="70">
+                <span id="particleCount-val">70</span>
+            </div>
+            <div class="slider-row">
+                <label>Blur:</label>
+                <input type="range" id="softness" min="0" max="0.8" step="0.05" value="0.3">
+                <span id="softness-val">0.30</span>
+            </div>
+            <div class="slider-row">
+                <label>Glow:</label>
+                <input type="range" id="glow" min="0" max="2" step="0.1" value="0.8">
+                <span id="glow-val">0.80</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <h4>Type-Specific</h4>
+            <p class="desc" id="type-specific-desc">Core radius for this particle type</p>
+            <div class="slider-row" id="coreRadius-row">
+                <label>Core Radius:</label>
+                <input type="range" id="coreRadius" min="0.1" max="1.0" step="0.05" value="0.65">
+                <span id="coreRadius-val">0.65</span>
+            </div>
+            <div class="slider-row" id="orbitSpeed-row" style="display:none;">
+                <label>Orbit Speed:</label>
+                <input type="range" id="orbitSpeed" min="0" max="2" step="0.1" value="0.5">
+                <span id="orbitSpeed-val">0.50</span>
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <button class="reset-btn" onclick="resetParticleConfig()">Reset Defaults</button>
+            <button class="copy-btn" onclick="copyParticleConfig()">Copy Config</button>
+            <button class="action-btn" onclick="applyToGame()">Apply to Game</button>
+        </div>
+    </div>
+
+    <script type="module" src="src/particle-config-test.js"></script>
+</body>
+</html>

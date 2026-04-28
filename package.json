@@ -1,0 +1,47 @@
+{
+  "name": "chromatic-resonance-3d",
+  "version": "0.1.0",
+  "description": "Third-person 3D proof-of-concept for Chromatic Resonance",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "npm run test:visual && npm run test:animations",
+    "test:ui": "node tests/ui-visibility-test.js",
+    "test:visual": "node tests/visual-test.js",
+    "test:heights": "node tests/visual-test.js --heights",
+    "test:enemies": "node tests/visual-test.js --enemies",
+    "test:animations": "node tests/animation-test.js",
+    "agents:verify": "node .agents/scripts/verify-setup.js",
+    "agents:daemon": ".agents/scripts/run-daemon.bat",
+    "agents:animation-swarm": "node .agents/scripts/run-animation-swarm.js",
+    "style:capture": "node .agents/scripts/capture-screenshots.js",
+    "style:palette": "node .agents/scripts/extract-palette.js",
+    "style:check": "node .agents/scripts/style-distance.js",
+    "style:check-ci": "node .agents/scripts/style-distance.js --ci",
+    "style:qa": "node .agents/scripts/run-style-qa.js",
+    "style:tune": "node .agents/scripts/run-style-tuner.js",
+    "vehicle:test": "node .agents/scripts/verify-vehicle.js",
+    "vehicle:drive": "node .agents/scripts/verify-jeep-driving.js",
+    "vehicle:vision-qa": "node .agents/scripts/run-vehicle-vision-qa.js",
+    "vehicle:physics-4x4": "node .agents/scripts/verify-vehicle-4x4.js",
+    "vehicle:overhaul": "node .agents/scripts/verify-vehicle-4x4.js",
+    "character:wobbler": "node .agents/scripts/verify-wobbler.js",
+    "openworld:qa": "node .agents/scripts/run-openworld-qa.js",
+    "openworld:perf": "node .agents/scripts/run-openworld-qa.js --perf",
+    "polish:sim": "node .agents/scripts/gameplay-sim.js",
+    "polish:sim:failed": "node .agents/scripts/gameplay-sim.js --only-failed",
+    "polish:notify:test": "node .agents/scripts/notify.js --test",
+    "polish:regression": "node .agents/scripts/verify-vehicle-4x4.js && node .agents/scripts/verify-jeep-driving.js && node .agents/scripts/verify-wobbler.js",
+    "style:measure": "node .agents/scripts/measure-style-distance.js"
+  },
+  "dependencies": {
+    "blazinwfc": "^1.0.13",
+    "three": "^0.161.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.41.0",
+    "vite": "^5.0.0"
+  }
+}
