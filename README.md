@@ -7,9 +7,20 @@
 
 [**Live demo →**](https://danfking.github.io/chromatic-resonance-3d/)
 
-![Animation test scene](docs/test-scene.png)
+![Gameplay](docs/gameplay.png)
 
-*The isolated test scene I built for the agent QA loop, since the main game produced too much visual noise for screenshot-based regression testing. More on that under "what this experiment showed", below.*
+*The blob player, a jeep, and a couple of NPCs in the Chillagoe Research Site. Rendered through the Low Poly style preset.*
+
+### Same scene, four style presets
+
+The renderer ships a Style Lab that swaps post-processing chains at runtime (1-4 in debug mode, F3). Here is the same frame above, rendered through the four current presets.
+
+| | |
+|---|---|
+| ![Watercolour](docs/style-1-watercolour.png) | ![Low Poly](docs/style-2-lowpoly.png) |
+| ![Borderlands](docs/style-3-borderlands.png) | ![BotW](docs/style-4-botw.png) |
+
+*Top: Watercolour (default), Low Poly. Bottom: Borderlands, BotW. The presence of multiple "candidate" styles, and the absence of a chosen one, is a big part of what this experiment showed; see below.*
 
 ## About this project
 
@@ -74,6 +85,10 @@ This is the section worth reading even if you don't care about the game.
 - **Style presets in code are a hedge, not a solution.** I built a Style Lab module that swaps between five visual presets at runtime (Watercolour, Low Poly, Borderlands, BotW, Sable). Useful for evaluation, but having five "candidate styles" is not the same as having one *chosen* style. The decision-making part remained mine, and it's the part I never made.
 - **Scope creep is the agent's failure mode.** Without strong opinion-shaping inputs, an agent will keep adding systems. Each system is a small win. Together they make a project no human can finish polishing alone. If I came back to this, I'd start by *removing* features, not adding them.
 - **Knowing when the experiment has answered itself.** The big finding from this project was the breadth/coherence asymmetry above. That answered the question I built it to answer. Pushing through to a polished release would have been a different experiment about visual direction-setting, with a different agent loop, and I didn't want to confuse the two.
+
+![Animation test scene](docs/test-scene.png)
+
+*The isolated test scene the agent QA loop used for animation verification. The main game produced too much visual noise (NPR shaders, particle "grass", enemies, UI) for screenshot-based regression testing to be reliable, so the loop got its own clean room. The character mesh here is a leftover from a humanoid-player iteration that the project moved away from.*
 
 ## Status and what's next
 
