@@ -7,7 +7,9 @@
 
 [**Live demo →**](https://danfking.github.io/chromatic-resonance-3d/)
 
-![Gameplay](docs/gameplay.png)
+![Animation test scene](docs/test-scene.png)
+
+*The isolated test scene I built for the agent QA loop, since the main game produced too much visual noise for screenshot-based regression testing. More on that under "what this experiment showed", below.*
 
 ## About this project
 
